@@ -4,10 +4,13 @@ import com.cydeo.employeeregistrationproject.bootstrap.DataGenerator;
 import com.cydeo.employeeregistrationproject.model.Employee;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/employee")
@@ -24,7 +27,12 @@ public class EmployeeController {
     }
 
     @PostMapping("/list")
-    public String listEmployee(@ModelAttribute("employee") Employee employee, Model model){
+    public String listEmployee(@Valid @ModelAttribute("employee") Employee employee, BindingResult bindingResult, Model model){
+
+        if(bindingResult.hasErrors()){
+            model.addAttribute("states", DataGenerator.getAllStates());
+            return "employee/employee-create";
+        }
 
         DataGenerator.saveEmployee(employee);
 
